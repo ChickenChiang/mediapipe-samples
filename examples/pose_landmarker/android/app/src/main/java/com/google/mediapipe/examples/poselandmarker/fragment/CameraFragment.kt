@@ -328,7 +328,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
             .build()
 
         // ImageAnalysis. Using RGBA 8888 to match how our models work
-        imageAnalyzer =
+        imageAnalyzer = // TODO: HERE set up image analyzer
             ImageAnalysis.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3)
                 .setTargetRotation(fragmentCameraBinding.viewFinder.display.rotation)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)

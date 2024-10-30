@@ -119,7 +119,7 @@ class PoseLandmarkerHelper(
 
             // The ResultListener and ErrorListener only use for LIVE_STREAM mode.
             if (runningMode == RunningMode.LIVE_STREAM) {
-                optionsBuilder
+                optionsBuilder // TODO: IMPT set live stream results listener
                     .setResultListener(this::returnLivestreamResult)
                     .setErrorListener(this::returnLivestreamError)
             }
@@ -200,7 +200,7 @@ class PoseLandmarkerHelper(
 
     // Run pose landmark using MediaPipe Pose Landmarker API
     @VisibleForTesting
-    fun detectAsync(mpImage: MPImage, frameTime: Long) {
+        fun detectAsync(mpImage: MPImage, frameTime: Long) {
         poseLandmarker?.detectAsync(mpImage, frameTime)
         // As we're using running mode LIVE_STREAM, the landmark result will
         // be returned in returnLivestreamResult function

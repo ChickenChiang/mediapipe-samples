@@ -43,12 +43,13 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_alignParentTop="true"
-            android:background="@color/toolbar_background">
+            android:background="@color/yellow_main">
 
             <ImageView
+                android:layout_gravity="start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/media_pipe_banner" />
+                android:src="@drawable/pushups_svgrepo_com" />
         </androidx.appcompat.widget.Toolbar>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
