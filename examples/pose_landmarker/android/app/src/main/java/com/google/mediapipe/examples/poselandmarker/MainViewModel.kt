@@ -23,9 +23,7 @@ import java.util.Timer
  *  This ViewModel is used to store pose landmarker helper settings
  */
 class MainViewModel : ViewModel() {
-    enum class TimerState {
-        Stopped, Paused, Running
-    }
+
 
 
     private var _model = PoseLandmarkerHelper.MODEL_POSE_LANDMARKER_FULL
@@ -49,12 +47,6 @@ class MainViewModel : ViewModel() {
         get() =
             _minPosePresenceConfidence
 
-
-    // Timer stuff
-    private lateinit var timer: CountDownTimer
-    private var timerLengthSeconds: Long = 0L
-    private var timerState: TimerState = TimerState.Stopped
-    private var secondsRemaining: Long = 0L
 
     fun setDelegate(delegate: Int) {
         _delegate = delegate

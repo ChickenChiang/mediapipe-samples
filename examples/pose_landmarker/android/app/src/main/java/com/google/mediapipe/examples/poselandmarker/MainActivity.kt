@@ -16,35 +16,122 @@
 
 package com.google.mediapipe.examples.poselandmarker
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
-import android.widget.Button
-import androidx.activity.viewModels
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mediapipe.examples.poselandmarker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+
     private lateinit var activityMainBinding: ActivityMainBinding
-    private val viewModel : MainViewModel by viewModels()
+//    private val viewModel: MainViewModel by viewModels()
+
+    // Timer stuff
+    enum class TimerState {
+        Stopped, Paused, Running
+    }
+
+    private lateinit var timer: CountDownTimer
+    private var timerLengthSeconds: Long = 0L
+    private var timerState: TimerState = TimerState.Stopped
+    private var secondsRemaining: Long = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
 
-//        val navHostFragment =
-//            supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
-//        val navController = navHostFragment.navController
-////        activityMainBinding.navigation.setupWithNavController(navController)
-////        activityMainBinding.navigation.setOnNavigationItemReselectedListener {
-////            // ignore the reselection
-////        }
-        findViewById<Button>(R.id.startButton).setOnClickListener{
+        var startButton = findViewById<FloatingActionButton>(R.id.startButton)
+        var pauseButton = findViewById<FloatingActionButton>(R.id.pauseButton)
+        startButton.setOnClickListener { view ->
+            if (timerState == TimerState.Stopped) {
+                startTimer()
+            } else if (timerState == TimerState.Running) {
+                pauseTimer()
+            } else if (timerState == TimerState.Paused) {
+                continueTimer()
+            }
             Log.d("MainActivity", "Start button pressed")
+//            updateButtons()
+        }
+
+        pauseButton.setOnClickListener { view ->
+            if (timerState == TimerState.Running) {
+                timerState = TimerState.Paused
+                timer.cancel()
+            }
         }
     }
+
+    fun startTimer() {
+        timerState = TimerState.Running
+        timer = object : CountDownTimer(60 * 1000, 1000) {
+            override fun onFinish() {
+
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+                secondsRemaining = millisUntilFinished / 1000
+                updateCountDownUI()
+            }
+        }.start()
+    }
+
+    fun pauseTimer() {
+        timerState = TimerState.Paused
+        timer.cancel()
+    }
+
+    fun continueTimer() {
+        Log.d("Timer", "Continuing timer")
+        assert(timerState == TimerState.Paused)
+        timerState = TimerState.Running
+        val timeLeftInMillis = secondsRemaining * 1000
+        timer = object : CountDownTimer(timeLeftInMillis * 1000, 1000) {
+            override fun onFinish() {
+
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+                secondsRemaining = millisUntilFinished / 1000
+                updateCountDownUI()
+            }
+        }.start()
+    }
+
+    fun updateCountDownUI() {
+        var timerText = findViewById<TextView>(R.id.countdown_Timer)
+        val minutesUntilFinished = secondsRemaining / 60
+        val secondsInMinuteUntilFinished = secondsRemaining - minutesUntilFinished * 60
+        var secondsStr = secondsInMinuteUntilFinished.toString()
+        if (secondsStr.length < 2) {
+            secondsStr = "0" + secondsStr
+        }
+        timerText.text = "$minutesUntilFinished:$secondsStr"
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+//        initTimer()
+        //TODO: remove background timer
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        if (timerState == TimerState.Running) {
+////            viewModel.cancelTimer()
+//            // TODO: start background timer
+//        } else if (timerState == TimerState.Paused) {
+//            //TODO: show notif
+//        }
+    }
+
 
     override fun onBackPressed() {
         finish()
