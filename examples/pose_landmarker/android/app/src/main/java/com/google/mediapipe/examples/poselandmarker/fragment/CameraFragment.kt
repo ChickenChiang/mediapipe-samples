@@ -328,7 +328,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
             .build()
 
         // ImageAnalysis. Using RGBA 8888 to match how our models work
-        imageAnalyzer = // TODO: HERE set up image analyzer
+        imageAnalyzer =
             ImageAnalysis.Builder().setTargetAspectRatio(AspectRatio.RATIO_4_3)
                 .setTargetRotation(fragmentCameraBinding.viewFinder.display.rotation)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
@@ -379,6 +379,8 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
     override fun onResults(
         resultBundle: PoseLandmarkerHelper.ResultBundle
     ) {
+
+        // TODO: Pass results to push up counter in push up logic then update the ui
         activity?.runOnUiThread {
             if (_fragmentCameraBinding != null) {
                 fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
@@ -394,6 +396,11 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
 
                 // Force a redraw
                 fragmentCameraBinding.overlay.invalidate()
+                // TODO: Pass results to push up logic
+                viewModel.updateCount(resultBundle.results.first())
+
+                // Then update the UI with push up builder...?
+
             }
         }
     }
