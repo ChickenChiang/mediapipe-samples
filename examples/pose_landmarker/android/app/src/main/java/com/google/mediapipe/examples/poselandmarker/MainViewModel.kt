@@ -15,17 +15,23 @@
  */
 package com.google.mediapipe.examples.poselandmarker
 
-import android.os.CountDownTimer
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import java.util.Timer
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 
 /**
  *  This ViewModel is used to store pose landmarker helper settings
  */
+
+private const val TAG = "MainViewModel"
 class MainViewModel : ViewModel() {
 
 
-
+    private var pushUpLogic: PushUpLogic = PushUpLogic()
+    private val _count = MutableLiveData<Int>()
+    val count : LiveData<Int> = _count
     private var _model = PoseLandmarkerHelper.MODEL_POSE_LANDMARKER_FULL
     private var _delegate: Int = PoseLandmarkerHelper.DELEGATE_CPU
     private var _minPoseDetectionConfidence: Float =
@@ -47,6 +53,12 @@ class MainViewModel : ViewModel() {
         get() =
             _minPosePresenceConfidence
 
+
+    fun updateCount(result : PoseLandmarkerResult) {
+        pushUpLogic.processResult(result)
+        Log.d(TAG, "Processed Result")
+        _count.value  = pushUpLogic.count
+    }
 
     fun setDelegate(delegate: Int) {
         _delegate = delegate
