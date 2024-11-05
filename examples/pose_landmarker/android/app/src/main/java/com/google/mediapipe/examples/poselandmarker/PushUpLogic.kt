@@ -17,14 +17,15 @@ private const val TAG = "Push up Logic"
 
 class PushUpLogic() {
     var count = 0
-    var currState = BREAK
-    var stateKeeper: MutableList<Int> = mutableListOf<Int>()
-    val successFulPushUps = listOf<Int>(1, 0, 1)
+    var currState = INVALID_POSITION
+    var stateKeeper: MutableList<String> = mutableListOf<String>()
+    val successFulPushUps = listOf<String>(UP_POSITION, DOWN_POSITION, UP_POSITION)
 
-    companion object {
-        const val UP = 1
-        const val DOWN = 0
-        const val BREAK = -1
+    companion object PushupState {
+        const val UP_POSITION = "Up position"
+        const val DOWN_POSITION = "Down position"
+        const val INVALID_POSITION = "Invalid Position"
+
     }
 
     class Coordinates(val x: Float, val y: Float) {
@@ -100,7 +101,7 @@ class PushUpLogic() {
                 ) {
                     Log.d(TAG, "Legs not straight: LEFT: $leftKneeAngle, RIGHT: $rightKneeAngle")
                     // Don't count
-                    currState = BREAK
+                    currState = INVALID_POSITION
                 }
                 // If hips aren't straight
                 else if (leftHipAngle <= 160 || rightHipAngle <= 160 ||
@@ -108,11 +109,11 @@ class PushUpLogic() {
                 ) {
                     Log.d(TAG, "Hips not straight: LEFT: $leftHipAngle, RIGHT: $rightHipAngle")
                     // Don't count
-                    currState = BREAK
+                    currState = INVALID_POSITION
                 } else if (leftElbowAngle <= 90 && rightElbowAngle <= 90) {
-                    currState = DOWN
+                    currState = DOWN_POSITION
                 } else if (leftElbowAngle >= 150 && rightElbowAngle >= 150) {
-                    currState = UP
+                    currState = UP_POSITION
                 } else {
                     return
                 }
@@ -147,7 +148,7 @@ class PushUpLogic() {
             stateKeeper.add(currState)
         }
         if (stateKeeper == successFulPushUps) {
-            count + 1
+            count += 1
             Log.d(TAG, "Count: increment; COUNT: $count")
         }
     }
