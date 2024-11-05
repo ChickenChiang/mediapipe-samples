@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(activityMainBinding.root)
 
         var startButton = findViewById<FloatingActionButton>(R.id.startButton)
-        var pauseButton = findViewById<FloatingActionButton>(R.id.pauseButton)
+        var pauseButton = findViewById<FloatingActionButton>(R.id.resetButton)
         startButton.setOnClickListener { view ->
             if (timerState == TimerState.Stopped) {
                 startTimer()
