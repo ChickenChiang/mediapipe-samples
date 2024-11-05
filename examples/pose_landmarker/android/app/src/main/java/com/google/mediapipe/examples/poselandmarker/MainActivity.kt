@@ -20,9 +20,12 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mediapipe.examples.poselandmarker.databinding.ActivityMainBinding
+
+private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     enum class TimerState {
         Stopped, Paused, Running
     }
+    val viewModel : MainViewModel by viewModels()
 
     private lateinit var timer: CountDownTimer
     private var timerLengthSeconds: Long = 0L
@@ -56,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             } else if (timerState == TimerState.Paused) {
                 continueTimer()
             }
-            Log.d("MainActivity", "Start button pressed")
+            Log.d(TAG, "Start button pressed")
 //            updateButtons()
         }
 
@@ -88,7 +92,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun continueTimer() {
-        Log.d("Timer", "Continuing timer")
+        Log.d(TAG, "Continuing timer")
         assert(timerState == TimerState.Paused)
         timerState = TimerState.Running
         val timeLeftInMillis = secondsRemaining * 1000
@@ -114,24 +118,6 @@ class MainActivity : AppCompatActivity() {
         }
         timerText.text = "$minutesUntilFinished:$secondsStr"
     }
-
-
-    override fun onResume() {
-        super.onResume()
-//        initTimer()
-        //TODO: remove background timer
-    }
-
-    override fun onPause() {
-        super.onPause()
-//        if (timerState == TimerState.Running) {
-////            viewModel.cancelTimer()
-//            // TODO: start background timer
-//        } else if (timerState == TimerState.Paused) {
-//            //TODO: show notif
-//        }
-    }
-
 
     override fun onBackPressed() {
         finish()
