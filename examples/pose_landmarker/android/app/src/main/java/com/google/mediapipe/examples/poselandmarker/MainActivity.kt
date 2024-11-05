@@ -37,7 +37,8 @@ class MainActivity : AppCompatActivity() {
     enum class TimerState {
         Stopped, Paused, Running
     }
-    val viewModel : MainViewModel by viewModels()
+
+    val viewModel: MainViewModel by viewModels()
 
     private lateinit var timer: CountDownTimer
     private var timerLengthSeconds: Long = 0L
@@ -63,7 +64,9 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "Start button pressed")
 //            updateButtons()
         }
-
+        viewModel.count.observe(this) { count ->
+            updatePushUpCounter(count)
+        }
         pauseButton.setOnClickListener { view ->
             if (timerState == TimerState.Running) {
                 timerState = TimerState.Paused
@@ -81,7 +84,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTick(millisUntilFinished: Long) {
                 secondsRemaining = millisUntilFinished / 1000
-                updateCountDownUI()
+                updateCountDownTimer()
             }
         }.start()
     }
@@ -103,12 +106,12 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTick(millisUntilFinished: Long) {
                 secondsRemaining = millisUntilFinished / 1000
-                updateCountDownUI()
+                updateCountDownTimer()
             }
         }.start()
     }
 
-    fun updateCountDownUI() {
+    fun updateCountDownTimer() {
         var timerText = findViewById<TextView>(R.id.countdown_Timer)
         val minutesUntilFinished = secondsRemaining / 60
         val secondsInMinuteUntilFinished = secondsRemaining - minutesUntilFinished * 60
@@ -117,6 +120,12 @@ class MainActivity : AppCompatActivity() {
             secondsStr = "0" + secondsStr
         }
         timerText.text = "$minutesUntilFinished:$secondsStr"
+    }
+
+    fun updatePushUpCounter(count : Int) {
+        var countText = findViewById<TextView>(R.id.pushup_counter)
+        countText.text = "Count: $count"
+
     }
 
     override fun onBackPressed() {
