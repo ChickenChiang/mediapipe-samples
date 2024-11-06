@@ -15,6 +15,7 @@
  */
 package com.google.mediapipe.examples.poselandmarker
 
+import android.os.CountDownTimer
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -26,12 +27,10 @@ import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
  */
 
 private const val TAG = "MainViewModel"
+
 class MainViewModel : ViewModel() {
 
 
-    private var pushUpLogic: PushUpLogic = PushUpLogic()
-    private val _count = MutableLiveData<Int>()
-    val count : LiveData<Int> = _count
     private var _model = PoseLandmarkerHelper.MODEL_POSE_LANDMARKER_FULL
     private var _delegate: Int = PoseLandmarkerHelper.DELEGATE_CPU
     private var _minPoseDetectionConfidence: Float =
@@ -53,12 +52,21 @@ class MainViewModel : ViewModel() {
         get() =
             _minPosePresenceConfidence
 
-
-    fun updateCount(result : PoseLandmarkerResult) {
-        pushUpLogic.processResult(result)
-        Log.d(TAG, "Processed Result")
-        _count.value  = pushUpLogic.count
+    /* Timer variables */
+    // Timer stuff
+    enum class TimerState {
+        STOPPED, PAUSED, RUNNING
     }
+
+    private lateinit var timer: CountDownTimer
+    private var timerState: TimerState = TimerState.STOPPED
+    private var _secondsRemaining = MutableLiveData<Long>(60L) // IN SECONDS
+    var secondsRemaing: LiveData<Long> = _secondsRemaining
+
+    /* Push up variables */
+    private var pushUpLogic: PushUpLogic = PushUpLogic()
+    private val _count = MutableLiveData<Int>()
+    val count: LiveData<Int> = _count
 
     fun setDelegate(delegate: Int) {
         _delegate = delegate
@@ -78,5 +86,74 @@ class MainViewModel : ViewModel() {
 
     fun setModel(model: Int) {
         _model = model
+    }
+
+    // Timer and push up related stuff
+    private fun startTimer() {
+        timerState = TimerState.RUNNING
+        timer = object : CountDownTimer(60 * 1000, 1000) {
+            override fun onFinish() {
+                //TODO: stop counting
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+                _secondsRemaining.value = millisUntilFinished / 1000
+//                updateCountDownTimer()
+            }
+        }.start()
+    }
+
+    fun pauseTimer() {
+        timerState = TimerState.PAUSED
+        timer.cancel()
+    }
+
+    fun continueTimer() {
+        Log.d(TAG, "Continuing timer")
+        assert(timerState == TimerState.PAUSED)
+        timerState = TimerState.RUNNING
+        val timeLeftInMillis = secondsRemaing.value?.times(1000)
+        if (timeLeftInMillis != null) {
+            timer = object : CountDownTimer(timeLeftInMillis, 1000) {
+                override fun onFinish() {
+                    // TODO: Have push up counter stop counting STOP COUNTING
+                }
+                override fun onTick(millisUntilFinished: Long) {
+                    _secondsRemaining.value = millisUntilFinished / 1000
+//                    updateCountDownTimer()
+                }
+            }.start()
+        }
+
+    }
+
+    fun resetTimer() {
+        Log.d(TAG, "Reset Timer")
+        if (timerState == TimerState.RUNNING || timerState == TimerState.PAUSED) {
+            timer.cancel()
+        }
+        timerState = TimerState.STOPPED
+        _secondsRemaining.value = 60L
+    }
+
+
+    fun startStopTimer() {
+        if (timerState == TimerState.STOPPED) {
+            Log.d(TAG, "Start timer")
+            startTimer()
+        } else if (timerState == TimerState.RUNNING) {
+            // TODO: Have push up counter stop counting
+            Log.d(TAG, "Stop timer")
+            pauseTimer()
+        } else if (timerState == TimerState.PAUSED) {
+            Log.d(TAG, "Continue timer")
+            continueTimer()
+        }
+    }
+
+    fun updateCount(result: PoseLandmarkerResult) {
+        pushUpLogic.processResult(result)
+        Log.d(TAG, "Processed Result")
+        _count.value = pushUpLogic.count
     }
 }
