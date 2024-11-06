@@ -93,7 +93,7 @@ class MainViewModel : ViewModel() {
         timerState = TimerState.RUNNING
         timer = object : CountDownTimer(60 * 1000, 1000) {
             override fun onFinish() {
-                //TODO: stop counting
+                pushUpLogic.stopCounting()
             }
 
             override fun onTick(millisUntilFinished: Long) {
@@ -116,11 +116,10 @@ class MainViewModel : ViewModel() {
         if (timeLeftInMillis != null) {
             timer = object : CountDownTimer(timeLeftInMillis, 1000) {
                 override fun onFinish() {
-                    // TODO: Have push up counter stop counting STOP COUNTING
+                    pushUpLogic.stopCounting()
                 }
                 override fun onTick(millisUntilFinished: Long) {
                     _secondsRemaining.value = millisUntilFinished / 1000
-//                    updateCountDownTimer()
                 }
             }.start()
         }
@@ -133,6 +132,7 @@ class MainViewModel : ViewModel() {
             timer.cancel()
         }
         timerState = TimerState.STOPPED
+        pushUpLogic.resetCounter()
         _secondsRemaining.value = 60L
     }
 
@@ -140,13 +140,16 @@ class MainViewModel : ViewModel() {
     fun startStopTimer() {
         if (timerState == TimerState.STOPPED) {
             Log.d(TAG, "Start timer")
+            pushUpLogic.startCounting()
             startTimer()
         } else if (timerState == TimerState.RUNNING) {
             // TODO: Have push up counter stop counting
             Log.d(TAG, "Stop timer")
+            pushUpLogic.stopCounting()
             pauseTimer()
         } else if (timerState == TimerState.PAUSED) {
             Log.d(TAG, "Continue timer")
+            pushUpLogic.startCounting()
             continueTimer()
         }
     }
@@ -154,6 +157,6 @@ class MainViewModel : ViewModel() {
     fun updateCount(result: PoseLandmarkerResult) {
         pushUpLogic.processResult(result)
         Log.d(TAG, "Processed Result")
-        _count.value = pushUpLogic.count
+        _count.value = pushUpLogic.getCount()
     }
 }
