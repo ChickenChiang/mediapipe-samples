@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             secondsLeftString = "0" + secondsLeftString
         }
         var timerText = findViewById<TextView>(R.id.countdown_Timer)
-        timerText.text = minutesLeftString + ":" + secondsLeftString
+        timerText.text = getString(R.string.timer_text, minutesLeftString, secondsLeftString)
 
     }
 
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
     fun updatePushUpCounter(count : Int) {
         var countText = findViewById<TextView>(R.id.pushup_counter)
-        countText.text = "Count :$count"
+        countText.text = getString(R.string.count_text, count)
 
     }
 
