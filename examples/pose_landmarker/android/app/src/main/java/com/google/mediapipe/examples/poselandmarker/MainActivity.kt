@@ -17,13 +17,13 @@
 package com.google.mediapipe.examples.poselandmarker
 
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mediapipe.examples.poselandmarker.databinding.ActivityMainBinding
+import kotlin.math.floor
 
 private const val TAG = "MainActivity"
 
@@ -33,17 +33,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
 //    private val viewModel: MainViewModel by viewModels()
 
-    // Timer stuff
-    enum class TimerState {
-        Stopped, Paused, Running
-    }
+
 
     val viewModel: MainViewModel by viewModels()
-
-    private lateinit var timer: CountDownTimer
-    private var timerLengthSeconds: Long = 0L
-    private var timerState: TimerState = TimerState.Stopped
-    private var secondsRemaining: Long = 0L
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,79 +44,48 @@ class MainActivity : AppCompatActivity() {
         setContentView(activityMainBinding.root)
 
         var startButton = findViewById<FloatingActionButton>(R.id.startButton)
-        var pauseButton = findViewById<FloatingActionButton>(R.id.resetButton)
+        var resetButton = findViewById<FloatingActionButton>(R.id.resetButton)
         startButton.setOnClickListener { view ->
-            if (timerState == TimerState.Stopped) {
-                startTimer()
-            } else if (timerState == TimerState.Running) {
-                pauseTimer()
-            } else if (timerState == TimerState.Paused) {
-                continueTimer()
-            }
-            Log.d(TAG, "Start button pressed")
-//            updateButtons()
+            viewModel.startStopTimer()
+            Log.d(TAG, "Start/Stop button pressed")
         }
         viewModel.count.observe(this) { count ->
             updatePushUpCounter(count)
         }
-        pauseButton.setOnClickListener { view ->
-            if (timerState == TimerState.Running) {
-                timerState = TimerState.Paused
-                timer.cancel()
-            }
+        viewModel.secondsRemaing.observe(this) { secondsLeft ->
+            updateTimerUI(secondsLeft)
+        }
+        resetButton.setOnClickListener { view ->
+            viewModel.resetTimer()
         }
     }
 
-    fun startTimer() {
-        timerState = TimerState.Running
-        timer = object : CountDownTimer(60 * 1000, 1000) {
-            override fun onFinish() {
-
-            }
-
-            override fun onTick(millisUntilFinished: Long) {
-                secondsRemaining = millisUntilFinished / 1000
-                updateCountDownTimer()
-            }
-        }.start()
-    }
-
-    fun pauseTimer() {
-        timerState = TimerState.Paused
-        timer.cancel()
-    }
-
-    fun continueTimer() {
-        Log.d(TAG, "Continuing timer")
-        assert(timerState == TimerState.Paused)
-        timerState = TimerState.Running
-        val timeLeftInMillis = secondsRemaining * 1000
-        timer = object : CountDownTimer(timeLeftInMillis * 1000, 1000) {
-            override fun onFinish() {
-
-            }
-
-            override fun onTick(millisUntilFinished: Long) {
-                secondsRemaining = millisUntilFinished / 1000
-                updateCountDownTimer()
-            }
-        }.start()
-    }
-
-    fun updateCountDownTimer() {
+    fun updateTimerUI(secondsLeft : Long) {
+        var minutesLeftString = floor((secondsLeft / 60).toDouble()).toInt().toString()
+        var secondsLeftString = (secondsLeft % 60).toString()
+        if (secondsLeftString.length < 2) {
+            secondsLeftString = "0" + secondsLeftString
+        }
         var timerText = findViewById<TextView>(R.id.countdown_Timer)
-        val minutesUntilFinished = secondsRemaining / 60
-        val secondsInMinuteUntilFinished = secondsRemaining - minutesUntilFinished * 60
-        var secondsStr = secondsInMinuteUntilFinished.toString()
-        if (secondsStr.length < 2) {
-            secondsStr = "0" + secondsStr
-        }
-        timerText.text = "$minutesUntilFinished:$secondsStr"
+        timerText.text = minutesLeftString + ":" + secondsLeftString
+
     }
+
+
+//    fun updateCountDownTimer() {
+//        var timerText = findViewById<TextView>(R.id.countdown_Timer)
+//        val minutesUntilFinished = secondsRemaining / 60
+//        val secondsInMinuteUntilFinished = secondsRemaining - minutesUntilFinished * 60
+//        var secondsStr = secondsInMinuteUntilFinished.toString()
+//        if (secondsStr.length < 2) {
+//            secondsStr = "0" + secondsStr
+//        }
+//        timerText.text = "$minutesUntilFinished:$secondsStr"
+//    }
 
     fun updatePushUpCounter(count : Int) {
         var countText = findViewById<TextView>(R.id.pushup_counter)
-        countText.text = "Count: $count"
+        countText.text = "Count :$count"
 
     }
 
