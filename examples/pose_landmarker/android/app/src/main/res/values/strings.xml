@@ -71,19 +71,25 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="initial_timer_string">1:00</string>
     <string name="initial_pushup_count">Count : 0</string>
-    <string name="initial_user_state_etxt">State: NA</string>
+    <string name="initial_user_state_text">State: NA</string>
     <string name="start_stop_button_content_description">Start/Stop</string>
     <string name="reset_button_content_description">Reset</string>
     <string name="timer_text">%1$s:%2$s</string>
     <string name="count_text">Count : %1$d</string>
     <string name="user_state_text">State: %1$s</string>
     <!-- Debug angles -->
-    <string name="left_elbow">%1$.0f &lt;- Left Elbow</string>
-    <string name="right_elbow">Right Elbow -&gt; %1$.0f</string>
-    <string name="left_hip">%1$.0f &lt;- Left Hip</string>
-    <string name="right_hip">Right Hip -&gt; %1$.0f</string>
-    <string name="left_knee">%1$.0f &lt;- Left Knee</string>
-    <string name="right_knee">Right Knee -&gt; %1$.0f</string>
+    <string name="initial_left_elbow">&lt;- Left Elbow</string>
+    <string name="initial_right_elbow">Right Elbow -&gt;</string>
+    <string name="initial_left_hip">&lt;- Left Hip</string>
+    <string name="initial_right_hip">Right Hip -&gt;</string>
+    <string name="initial_left_knee">&lt;- Left Knee</string>
+    <string name="initial_right_knee">Right Knee -&gt;</string>
+    <string name="left_elbow">%1$s &lt;- Left Elbow</string>
+    <string name="right_elbow">Right Elbow -&gt; %1$s</string>
+    <string name="left_hip">%1$s &lt;- Left Hip</string>
+    <string name="right_hip">Right Hip -&gt; %1$s</string>
+    <string name="left_knee">%1$s &lt;- Left Knee</string>
+    <string name="right_knee">Right Knee -&gt; %1$s</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
