@@ -380,7 +380,6 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
         resultBundle: PoseLandmarkerHelper.ResultBundle
     ) {
 
-        // TODO: Pass results to push up counter in push up logic then update the ui
         activity?.runOnUiThread {
             if (_fragmentCameraBinding != null) {
                 fragmentCameraBinding.bottomSheetLayout.inferenceTimeVal.text =
@@ -396,8 +395,7 @@ class CameraFragment : Fragment(), PoseLandmarkerHelper.LandmarkerListener {
 
                 // Force a redraw
                 fragmentCameraBinding.overlay.invalidate()
-                // TODO: Pass results to push up logic
-                viewModel.updateCount(resultBundle.results.first())
+                viewModel.updateModel(resultBundle.results.first())
 
                 // Then update the UI with push up builder...?
 
