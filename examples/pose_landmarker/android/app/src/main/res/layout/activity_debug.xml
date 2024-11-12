@@ -73,16 +73,16 @@
                 android:id="@+id/simpleTableLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="10dp"
                 android:paddingLeft="20dp"
+                android:paddingTop="10dp"
                 android:paddingRight="20dp"
-                android:stretchColumns="0,1"
-                >
+                android:stretchColumns="0,1">
 
                 <TableRow
                     android:id="@+id/row1"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
                         android:id="@+id/leftElbow"
                         android:layout_width="wrap_content"
@@ -90,9 +90,9 @@
                         android:background="@drawable/rounded_corner"
                         android:gravity="end"
                         android:padding="4dip"
-                        android:text="@string/left_elbow"
+                        android:text="@string/initial_left_elbow"
                         android:textColor="#000"
-                        android:textSize="14dp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/rightElbow"
@@ -102,23 +102,24 @@
 
                         android:gravity="start"
                         android:padding="4dip"
-                        android:text="@string/right_elbow"
+                        android:text="@string/initial_right_elbow"
                         android:textColor="#000"
-                        android:textSize="14dp" />
+                        android:textSize="14sp" />
                 </TableRow>
 
                 <TableRow
                     android:id="@+id/row2"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
                         android:id="@+id/leftHip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
                         android:background="@drawable/rounded_corner"
+                        android:gravity="end"
                         android:padding="4dip"
-                        android:text="@string/left_hip"
+                        android:text="@string/initial_left_hip"
                         android:textColor="#000"
                         android:textSize="14dp" />
 
@@ -129,7 +130,7 @@
                         android:background="@drawable/rounded_corner"
                         android:gravity="left"
                         android:padding="4dip"
-                        android:text="@string/right_hip"
+                        android:text="@string/initial_right_hip"
                         android:textColor="#000"
                         android:textSize="14dp" />
                 </TableRow>
@@ -138,14 +139,15 @@
                     android:id="@+id/row3"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
                         android:id="@+id/leftKnee"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
                         android:background="@drawable/rounded_corner"
+                        android:gravity="right"
                         android:padding="4dip"
-                        android:text="@string/left_knee"
+                        android:text="@string/initial_left_knee"
                         android:textColor="#000"
                         android:textSize="14dp" />
 
@@ -156,7 +158,7 @@
                         android:background="@drawable/rounded_corner"
                         android:gravity="left"
                         android:padding="4dip"
-                        android:text="@string/right_knee"
+                        android:text="@string/initial_right_knee"
                         android:textColor="#000"
                         android:textSize="14dp" />
                 </TableRow>
@@ -164,24 +166,58 @@
                 <TableRow
                     android:id="@+id/row4"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    >
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/state"
-                        android:layout_width="166dp"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_span="1"
                         android:background="@drawable/rounded_corner"
                         android:gravity="center"
                         android:padding="4dip"
-                        android:layout_span="2"
-                        android:text="@string/initial_user_state_etxt"
+                        android:text="@string/initial_user_state_text"
+                        android:textColor="#000"
+                        android:textSize="14dp" />
+                    <TextView
+                        android:id="@+id/pushup_counter"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_span="1"
+                        android:background="@drawable/rounded_corner"
+                        android:gravity="center"
+                        android:padding="4dip"
+                        android:text="@string/initial_pushup_count"
                         android:textColor="#000"
                         android:textSize="14dp" />
                 </TableRow>
 
-            </TableLayout>
+                <TableRow
+                    android:id="@+id/row5"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:dividerPadding="20sp">
+                    <Button
+                        android:id="@+id/startButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Start/stop"
+                        android:textColor="@color/bottom_sheet_text_color"
+                        android:textSize="10sp"/>
 
+                    <Button
+                        android:id="@+id/resetButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Reset"
+                        android:textColor="@color/bottom_sheet_text_color"
+                        android:textSize="10sp"/>
+
+                </TableRow>
+
+            </TableLayout>
 
 
         </LinearLayout>
