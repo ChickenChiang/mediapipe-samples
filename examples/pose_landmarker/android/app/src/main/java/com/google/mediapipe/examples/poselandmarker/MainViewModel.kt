@@ -65,8 +65,12 @@ class MainViewModel : ViewModel() {
 
     /* Push up variables */
     private var pushUpLogic: PushUpLogic = PushUpLogic()
+    private val _currUserState = MutableLiveData<String>()
+    val currUserState = _currUserState
     private val _count = MutableLiveData<Int>()
     val count: LiveData<Int> = _count
+    private val _angles = MutableLiveData<List<Double>>()
+    val angles: LiveData<List<Double>> =  _angles
 
     fun setDelegate(delegate: Int) {
         _delegate = delegate
@@ -154,9 +158,11 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun updateCount(result: PoseLandmarkerResult) {
+    fun updateModel(result: PoseLandmarkerResult) {
         pushUpLogic.processResult(result)
         Log.d(TAG, "Processed Result")
         _count.value = pushUpLogic.getCount()
+        _angles.value = pushUpLogic.getAngles()
+        _currUserState.value = pushUpLogic.getState()
     }
 }

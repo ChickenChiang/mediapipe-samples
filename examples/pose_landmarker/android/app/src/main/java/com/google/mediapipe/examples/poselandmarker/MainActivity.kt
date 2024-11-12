@@ -23,40 +23,72 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.mediapipe.examples.poselandmarker.databinding.ActivityDebugBinding
 import com.google.mediapipe.examples.poselandmarker.databinding.ActivityMainBinding
 import kotlin.math.floor
 
 private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var activityMainBinding: ActivityMainBinding
+    //    private lateinit var activityMainBinding: ActivityMainBinding
+    private lateinit var activityMainBinding: ActivityDebugBinding
+
     val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        activityMainBinding = ActivityDebugBinding.inflate(layoutInflater)
+
+//        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
 
-        var startButton = findViewById<FloatingActionButton>(R.id.startButton)
-        var resetButton = findViewById<FloatingActionButton>(R.id.resetButton)
-        viewModel.count.observe(this) { count ->
-            updatePushUpCounter(count)
+//        var startButton = findViewById<FloatingActionButton>(R.id.startButton)
+//        var resetButton = findViewById<FloatingActionButton>(R.id.resetButton)
+//        viewModel.count.observe(this) { count ->
+//            updatePushUpCounter(count)
+//        }
+//        viewModel.secondsRemaing.observe(this) { secondsLeft ->
+//            updateTimerUI(secondsLeft)
+//        }
+        viewModel.currUserState.observe(this) { state ->
+            updateUserState(state)
         }
-        viewModel.secondsRemaing.observe(this) { secondsLeft ->
-            updateTimerUI(secondsLeft)
+
+        viewModel.angles.observe(this) { angleList ->
+            updateAngles(angleList)
         }
-        startButton.setOnClickListener { view ->
-            viewModel.startStopTimer()
-            Log.d(TAG, "Start/Stop button pressed")
+        viewModel.
+
+//        startButton.setOnClickListener { view ->
+//            viewModel.startStopTimer()
+//            Log.d(TAG, "Start/Stop button pressed")
+//        }
+//        resetButton.setOnClickListener { view ->
+//            viewModel.resetTimer()
+//            Snackbar.make(
+//                view,
+//                "Counter has been reset",
+//                Snackbar.LENGTH_SHORT
+//            ).show()
+//        }
+    }
+
+    fun updateAngles(angleList : List<Double>) {
+        if (angleList.size == 6) {
+        findViewById<TextView>(R.id.leftElbow).text = getString(R.string.left_elbow, angleList[0])
+            findViewById<TextView>(R.id.rightElbow).text =
+                getString(R.string.right_elbow, angleList[1])
+            findViewById<TextView>(R.id.leftHip).text = getString(R.string.left_hip, angleList[2])
+            findViewById<TextView>(R.id.rightHip).text = getString(R.string.right_hip, angleList[3])
+            findViewById<TextView>(R.id.leftKnee).text = getString(R.string.left_knee, angleList[4])
+            findViewById<TextView>(R.id.rightKnee).text =
+                getString(R.string.right_knee, angleList[5])
         }
-        resetButton.setOnClickListener { view ->
-            viewModel.resetTimer()
-            Snackbar.make(
-                view,
-                "Counter has been reset",
-                Snackbar.LENGTH_SHORT
-            ).show()
-        }
+    }
+
+    fun updateUserState(state: String) {
+        var userState = findViewById<TextView>(R.id.countdown_Timer)
+        userState.text = getString(R.string., state)
     }
 
     fun updateTimerUI(secondsLeft: Long) {
