@@ -18,13 +18,13 @@ package com.google.mediapipe.examples.poselandmarker
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.mediapipe.examples.poselandmarker.PushUpUtility.isHipStraight
 import com.google.mediapipe.examples.poselandmarker.databinding.ActivityDebugBinding
-import com.google.mediapipe.examples.poselandmarker.databinding.ActivityMainBinding
 import kotlin.math.floor
 
 private const val TAG = "MainActivity"
@@ -42,53 +42,91 @@ class MainActivity : AppCompatActivity() {
 //        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
 
-//        var startButton = findViewById<FloatingActionButton>(R.id.startButton)
-//        var resetButton = findViewById<FloatingActionButton>(R.id.resetButton)
-//        viewModel.count.observe(this) { count ->
-//            updatePushUpCounter(count)
-//        }
-//        viewModel.secondsRemaing.observe(this) { secondsLeft ->
-//            updateTimerUI(secondsLeft)
-//        }
+        var startButton = findViewById<Button>(R.id.startButton)
+        var resetButton = findViewById<Button>(R.id.resetButton)
+        viewModel.count.observe(this) { count ->
+            updatePushUpCounter(count)
+        }
+        viewModel.secondsRemaing.observe(this) { secondsLeft ->
+            updateTimerUI(secondsLeft)
+        }
         viewModel.currUserState.observe(this) { state ->
             updateUserState(state)
         }
-
         viewModel.angles.observe(this) { angleList ->
             updateAngles(angleList)
         }
-        viewModel.
 
-//        startButton.setOnClickListener { view ->
-//            viewModel.startStopTimer()
-//            Log.d(TAG, "Start/Stop button pressed")
-//        }
-//        resetButton.setOnClickListener { view ->
-//            viewModel.resetTimer()
-//            Snackbar.make(
-//                view,
-//                "Counter has been reset",
-//                Snackbar.LENGTH_SHORT
-//            ).show()
-//        }
+        startButton.setOnClickListener { view ->
+            viewModel.startStopTimer()
+            Log.d(TAG, "Start/Stop button pressed")
+        }
+        resetButton.setOnClickListener { view ->
+            viewModel.resetTimer()
+            Snackbar.make(
+                view,
+                "Counter has been reset",
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
     }
 
-    fun updateAngles(angleList : List<Double>) {
+    fun updateAngles(angleList: List<Double>) {
         if (angleList.size == 6) {
-        findViewById<TextView>(R.id.leftElbow).text = getString(R.string.left_elbow, angleList[0])
+            // ELBOWS
+            findViewById<TextView>(R.id.leftElbow).text =
+                getString(R.string.left_elbow, "%.0f".format(angleList[0]))
             findViewById<TextView>(R.id.rightElbow).text =
-                getString(R.string.right_elbow, angleList[1])
-            findViewById<TextView>(R.id.leftHip).text = getString(R.string.left_hip, angleList[2])
-            findViewById<TextView>(R.id.rightHip).text = getString(R.string.right_hip, angleList[3])
-            findViewById<TextView>(R.id.leftKnee).text = getString(R.string.left_knee, angleList[4])
+                getString(R.string.right_elbow, "%.0f".format(angleList[1]))
+
+            // HIPS
+            var leftHipTextView = findViewById<TextView>(R.id.leftHip)
+            if (isHipStraight(angleList[2])) {
+                leftHipTextView.setBackgroundResource(R.drawable.rounded_corner)
+            } else {
+                leftHipTextView.setBackgroundResource(R.drawable.rounded_corner_red)
+            }
+            leftHipTextView.text = getString(R.string.left_hip, "%.0f".format(angleList[2]))
+
+            var rightHipTextView = findViewById<TextView>(R.id.rightHip)
+            if (isHipStraight(angleList[3])) {
+                rightHipTextView.setBackgroundResource(R.drawable.rounded_corner)
+            } else {
+                rightHipTextView.setBackgroundResource(R.drawable.rounded_corner_red)
+            }
+            rightHipTextView.text = getString(R.string.right_hip, "%.0f".format(angleList[3]))
+
+            // KNEES
+            findViewById<TextView>(R.id.leftKnee).text =
+                getString(R.string.left_knee, "%.0f".format(angleList[4]))
             findViewById<TextView>(R.id.rightKnee).text =
-                getString(R.string.right_knee, angleList[5])
+                getString(R.string.right_knee, "%.0f".format(angleList[5]))
+        } else {
+            findViewById<TextView>(R.id.leftElbow).text =
+                getString(R.string.left_elbow, "NA")
+            findViewById<TextView>(R.id.rightElbow).text =
+                getString(R.string.right_elbow, "NA")
+            findViewById<TextView>(R.id.leftHip).text =
+                getString(R.string.left_hip, "NA")
+            findViewById<TextView>(R.id.rightHip).text =
+                getString(R.string.right_hip, "NA")
+            findViewById<TextView>(R.id.leftKnee).text =
+                getString(R.string.left_knee, "NA")
+            findViewById<TextView>(R.id.rightKnee).text =
+                getString(R.string.right_knee, "NA")
         }
     }
 
     fun updateUserState(state: String) {
-        var userState = findViewById<TextView>(R.id.countdown_Timer)
-        userState.text = getString(R.string., state)
+        var userStateTextView = findViewById<TextView>(R.id.state)
+        if (state == PushUpLogic.PushupState.INVALID_POSITION) {
+            userStateTextView.setBackgroundResource(R.drawable.rounded_corner_red)
+        } else if (state == PushUpLogic.PushupState.NO_PERSON_FOUND) {
+            userStateTextView.setBackgroundResource(R.drawable.rounded_corner_grey)
+        } else {
+            userStateTextView.setBackgroundResource(R.drawable.rounded_corner)
+        }
+        userStateTextView.text = getString(R.string.user_state_text, state)
     }
 
     fun updateTimerUI(secondsLeft: Long) {
@@ -96,14 +134,14 @@ class MainActivity : AppCompatActivity() {
         var minutesLeftString = floor((secondsLeft / 60).toDouble()).toInt().toString()
         // Get the remaining seconds
         var secondsLeftString = (secondsLeft % 60).toString()
-        // Add a zero infront if secondsleft are in the single digits
+        // Add a zero in front if `secondsleft` are in the single digits
         if (secondsLeftString.length < 2) {
             secondsLeftString = "0" + secondsLeftString
         }
 
         //Update the UI
-        var timerText = findViewById<TextView>(R.id.countdown_Timer)
-        timerText.text = getString(R.string.timer_text, minutesLeftString, secondsLeftString)
+//        var timerText = findViewById<TextView>(R.id.countdown_Timer)
+//        timerText.text = getString(R.string.timer_text, minutesLeftString, secondsLeftString)
 
     }
 
