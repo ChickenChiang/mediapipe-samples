@@ -147,7 +147,6 @@ class MainViewModel : ViewModel() {
             pushUpLogic.startCounting()
             startTimer()
         } else if (timerState == TimerState.RUNNING) {
-            // TODO: Have push up counter stop counting
             Log.d(TAG, "Stop timer")
             pushUpLogic.stopCounting()
             pauseTimer()

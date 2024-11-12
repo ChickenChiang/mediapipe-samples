@@ -119,7 +119,7 @@ class PoseLandmarkerHelper(
 
             // The ResultListener and ErrorListener only use for LIVE_STREAM mode.
             if (runningMode == RunningMode.LIVE_STREAM) {
-                optionsBuilder // TODO: IMPT set live stream results listener
+                optionsBuilder
                     .setResultListener(this::returnLivestreamResult)
                     .setErrorListener(this::returnLivestreamError)
             }

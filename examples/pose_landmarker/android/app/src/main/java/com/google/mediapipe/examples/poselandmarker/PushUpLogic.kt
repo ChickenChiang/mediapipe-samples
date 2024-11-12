@@ -148,7 +148,6 @@ class PushUpLogic() {
             (landmark3.x - landmark2.x).toDouble()
         )
         // If angle is negative, the magnitude of the angle between the two vectors is the clockwise rotation
-        // TODO: Figure out how to get the legs angle
         var angle = Math.toDegrees(angle2 - angle1)
         if (angle > 180) {
             angle -= 360
@@ -321,7 +320,6 @@ class PushUpLogic() {
         val rightHipAngle = calculateAngle3D(rightKnee, rightHip, rightShoulder)
         val leftKneeAngle = calculateAngle3D(leftAnkle3D, leftKnee3D, leftHip3D)
         val rightKneeAngle = calculateAngle3D(rightAnkle, rightKnee, rightHip)
-        // TODO: Check for visibility and confidence
         */
         var isValidForm = true
 
