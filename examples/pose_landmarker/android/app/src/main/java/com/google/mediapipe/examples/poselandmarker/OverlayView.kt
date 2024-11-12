@@ -57,8 +57,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         linePaint.strokeWidth = LANDMARK_STROKE_WIDTH
         linePaint.style = Paint.Style.STROKE
 
-        pointPaint.color = Color.YELLOW
-        pointPaint.strokeWidth = LANDMARK_STROKE_WIDTH
+        pointPaint.color = Color.BLACK
+        pointPaint.strokeWidth = 10F
         pointPaint.style = Paint.Style.FILL
     }
 
@@ -66,14 +66,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
         super.draw(canvas)
         results?.let { poseLandmarkerResult ->
             for (landmark in poseLandmarkerResult.landmarks()) {
-                for (normalizedLandmark in landmark) {
-                    canvas.drawPoint(
-                        normalizedLandmark.x() * imageWidth * scaleFactor,
-                        normalizedLandmark.y() * imageHeight * scaleFactor,
-                        pointPaint
-                    )
-                }
-
                 PoseLandmarker.POSE_LANDMARKS.forEach {
                     canvas.drawLine(
                         poseLandmarkerResult.landmarks().get(0).get(it!!.start())
@@ -87,6 +79,16 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
                         linePaint
                     )
                 }
+
+                for (normalizedLandmark in landmark) {
+                    canvas.drawPoint(
+                        normalizedLandmark.x() * imageWidth * scaleFactor,
+                        normalizedLandmark.y() * imageHeight * scaleFactor,
+                        pointPaint
+                    )
+                }
+
+
             }
         }
     }
@@ -120,6 +122,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) :
     }
 
     companion object {
-        private const val LANDMARK_STROKE_WIDTH = 12F
+        private const val LANDMARK_STROKE_WIDTH = 7F
     }
 }
