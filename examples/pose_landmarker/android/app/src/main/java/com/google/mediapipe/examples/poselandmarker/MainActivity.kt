@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(
                 view,
                 "Counter has been reset",
-                Snackbar.LENGTH_SHORT
+                Snackbar.ANIMATION_MODE_SLIDE
             ).show()
         }
     }
