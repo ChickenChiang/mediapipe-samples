@@ -22,6 +22,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.mediapipe.examples.poselandmarker.PushUpUtility.isHipStraight
 import com.google.mediapipe.examples.poselandmarker.PushUpUtility.isLegStraight
@@ -45,6 +46,8 @@ class MainActivity : AppCompatActivity() {
 
         var startButton = findViewById<Button>(R.id.startButton)
         var resetButton = findViewById<Button>(R.id.resetButton)
+        var angle3DSwitch = findViewById<SwitchCompat>(R.id.switch1)
+
         viewModel.count.observe(this) { count ->
             updatePushUpCounter(count)
         }
@@ -62,12 +65,19 @@ class MainActivity : AppCompatActivity() {
             viewModel.startStopTimer()
             Log.d(TAG, "Start/Stop button pressed")
         }
+
         resetButton.setOnClickListener { view ->
             viewModel.resetTimer()
             Snackbar.make(
                 view, "Counter has been reset", Snackbar.ANIMATION_MODE_SLIDE
             ).show()
         }
+
+        angle3DSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.setAngleCalculationMode(isChecked)
+        }
+
+
     }
 
     fun updateAngles(angleList: List<Double>) {
