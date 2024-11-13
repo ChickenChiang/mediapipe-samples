@@ -24,6 +24,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.mediapipe.examples.poselandmarker.PushUpUtility.isHipStraight
+import com.google.mediapipe.examples.poselandmarker.PushUpUtility.isLegStraight
 import com.google.mediapipe.examples.poselandmarker.databinding.ActivityDebugBinding
 import kotlin.math.floor
 
@@ -64,23 +65,27 @@ class MainActivity : AppCompatActivity() {
         resetButton.setOnClickListener { view ->
             viewModel.resetTimer()
             Snackbar.make(
-                view,
-                "Counter has been reset",
-                Snackbar.ANIMATION_MODE_SLIDE
+                view, "Counter has been reset", Snackbar.ANIMATION_MODE_SLIDE
             ).show()
         }
     }
 
     fun updateAngles(angleList: List<Double>) {
+        var leftElbowTextView = findViewById<TextView>(R.id.leftElbow)
+        var rightElbowTextView = findViewById<TextView>(R.id.rightElbow)
+        var leftHipTextView = findViewById<TextView>(R.id.leftHip)
+        var rightHipTextView = findViewById<TextView>(R.id.rightHip)
+        var leftKneeTextView = findViewById<TextView>(R.id.leftKnee)
+        var rightKneeTextView = findViewById<TextView>(R.id.rightKnee)
         if (angleList.size == 6) {
             // ELBOWS
-            findViewById<TextView>(R.id.leftElbow).text =
-                getString(R.string.left_elbow, "%.0f".format(angleList[0]))
-            findViewById<TextView>(R.id.rightElbow).text =
-                getString(R.string.right_elbow, "%.0f".format(angleList[1]))
+            leftElbowTextView.text = getString(R.string.left_elbow, "%.0f".format(angleList[0]))
+            rightElbowTextView.text = getString(R.string.right_elbow, "%.0f".format(angleList[1]))
+            leftElbowTextView.setBackgroundResource(R.drawable.rounded_corner)
+            rightElbowTextView.setBackgroundResource(R.drawable.rounded_corner)
+
 
             // HIPS
-            var leftHipTextView = findViewById<TextView>(R.id.leftHip)
             if (isHipStraight(angleList[2])) {
                 leftHipTextView.setBackgroundResource(R.drawable.rounded_corner)
             } else {
@@ -88,7 +93,6 @@ class MainActivity : AppCompatActivity() {
             }
             leftHipTextView.text = getString(R.string.left_hip, "%.0f".format(angleList[2]))
 
-            var rightHipTextView = findViewById<TextView>(R.id.rightHip)
             if (isHipStraight(angleList[3])) {
                 rightHipTextView.setBackgroundResource(R.drawable.rounded_corner)
             } else {
@@ -97,23 +101,33 @@ class MainActivity : AppCompatActivity() {
             rightHipTextView.text = getString(R.string.right_hip, "%.0f".format(angleList[3]))
 
             // KNEES
-            findViewById<TextView>(R.id.leftKnee).text =
-                getString(R.string.left_knee, "%.0f".format(angleList[4]))
-            findViewById<TextView>(R.id.rightKnee).text =
-                getString(R.string.right_knee, "%.0f".format(angleList[5]))
-        } else {
-            findViewById<TextView>(R.id.leftElbow).text =
-                getString(R.string.left_elbow, "NA")
-            findViewById<TextView>(R.id.rightElbow).text =
-                getString(R.string.right_elbow, "NA")
-            findViewById<TextView>(R.id.leftHip).text =
-                getString(R.string.left_hip, "NA")
-            findViewById<TextView>(R.id.rightHip).text =
-                getString(R.string.right_hip, "NA")
-            findViewById<TextView>(R.id.leftKnee).text =
-                getString(R.string.left_knee, "NA")
-            findViewById<TextView>(R.id.rightKnee).text =
-                getString(R.string.right_knee, "NA")
+            if (isLegStraight(angleList[4])) {
+                leftKneeTextView.setBackgroundResource(R.drawable.rounded_corner)
+            } else {
+                leftKneeTextView.setBackgroundResource(R.drawable.rounded_corner_red)
+            }
+            leftKneeTextView.text = getString(R.string.left_knee, "%.0f".format(angleList[4]))
+
+            if (isLegStraight(angleList[5])) {
+                rightKneeTextView.setBackgroundResource(R.drawable.rounded_corner)
+            } else {
+                rightKneeTextView.setBackgroundResource(R.drawable.rounded_corner_red)
+            }
+            rightKneeTextView.text = getString(R.string.right_knee, "%.0f".format(angleList[5]))
+
+        } else { // Make all angle text show "NA"
+            leftElbowTextView.setBackgroundResource(R.drawable.rounded_corner_grey)
+            leftElbowTextView.text = getString(R.string.left_elbow, "NA")
+            rightElbowTextView.setBackgroundResource(R.drawable.rounded_corner_grey)
+            rightElbowTextView.text = getString(R.string.right_elbow, "NA")
+            leftHipTextView.setBackgroundResource(R.drawable.rounded_corner_grey)
+            leftHipTextView.text = getString(R.string.left_hip, "NA")
+            rightHipTextView.setBackgroundResource(R.drawable.rounded_corner_grey)
+            rightHipTextView.text = getString(R.string.right_hip, "NA")
+            leftKneeTextView.setBackgroundResource(R.drawable.rounded_corner_grey)
+            leftKneeTextView.text = getString(R.string.left_knee, "NA")
+            rightKneeTextView.setBackgroundResource(R.drawable.rounded_corner_grey)
+            rightKneeTextView.text = getString(R.string.right_knee, "NA")
         }
     }
 
