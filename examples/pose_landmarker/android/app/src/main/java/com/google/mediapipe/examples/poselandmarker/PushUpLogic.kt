@@ -160,7 +160,139 @@ class PushUpLogic() {
         return angle
     }
 
-    fun processResult(result: PoseLandmarkerResult) {
+    fun determineState3D(normalizedLandmark: List<NormalizedLandmark>) {
+
+        val leftWrist3D = Coordinates3D(
+            normalizedLandmark[LEFT_WRIST].x(),
+            normalizedLandmark[LEFT_WRIST].y(),
+            normalizedLandmark[LEFT_WRIST].z()
+        )
+        val leftElbow3D = Coordinates3D(
+            normalizedLandmark[LEFT_ELBOW].x(),
+            normalizedLandmark[LEFT_ELBOW].y(),
+            normalizedLandmark[LEFT_ELBOW].z()
+        )
+        val leftShoulder3D = Coordinates3D(
+            normalizedLandmark[LEFT_SHOULDER].x(),
+            normalizedLandmark[LEFT_SHOULDER].y(),
+            normalizedLandmark[LEFT_SHOULDER].z()
+        )
+        val leftHip3D = Coordinates3D(
+            normalizedLandmark[LEFT_HIP].x(),
+            normalizedLandmark[LEFT_HIP].y(),
+            normalizedLandmark[LEFT_HIP].z()
+        )
+        val leftKnee3D = Coordinates3D(
+            normalizedLandmark[LEFT_KNEE].x(),
+            normalizedLandmark[LEFT_KNEE].y(),
+            normalizedLandmark[LEFT_KNEE].z()
+        )
+        val leftAnkle3D = Coordinates3D(
+            normalizedLandmark[LEFT_ANKLE].x(),
+            normalizedLandmark[LEFT_ANKLE].y(),
+            normalizedLandmark[LEFT_ANKLE].z()
+        )
+
+        val rightWrist3D = Coordinates3D(
+            normalizedLandmark[RIGHT_WRIST].x(),
+            normalizedLandmark[RIGHT_WRIST].y(),
+            normalizedLandmark[RIGHT_WRIST].z()
+        )
+        val rightElbow3D = Coordinates3D(
+            normalizedLandmark[RIGHT_ELBOW].x(),
+            normalizedLandmark[RIGHT_ELBOW].y(),
+            normalizedLandmark[RIGHT_ELBOW].z()
+        )
+        val rightShoulder3D = Coordinates3D(
+            normalizedLandmark[RIGHT_SHOULDER].x(),
+            normalizedLandmark[RIGHT_SHOULDER].y(),
+            normalizedLandmark[RIGHT_SHOULDER].z()
+        )
+        val rightHip3D = Coordinates3D(
+            normalizedLandmark[RIGHT_HIP].x(),
+            normalizedLandmark[RIGHT_HIP].y(),
+            normalizedLandmark[RIGHT_HIP].z()
+        )
+        val rightKnee3D = Coordinates3D(
+            normalizedLandmark[RIGHT_KNEE].x(),
+            normalizedLandmark[RIGHT_KNEE].y(),
+            normalizedLandmark[RIGHT_KNEE].z()
+        )
+        val rightAnkle3D = Coordinates3D(
+            normalizedLandmark[RIGHT_ANKLE].x(),
+            normalizedLandmark[RIGHT_ANKLE].y(),
+            normalizedLandmark[RIGHT_ANKLE].z()
+        )
+
+        val leftElbowAngle3D = calculateAngle3D(leftWrist3D, leftElbow3D, leftShoulder3D)
+        val rightElbowAngle3D = calculateAngle3D(rightWrist3D, rightElbow3D, rightShoulder3D)
+        val leftHipAngle3D = calculateAngle3D(leftKnee3D, leftHip3D, leftShoulder3D)
+        val rightHipAngle3D = calculateAngle3D(rightKnee3D, rightHip3D, rightShoulder3D)
+        val leftKneeAngle3D = calculateAngle3D(leftAnkle3D, leftKnee3D, leftHip3D)
+        val rightKneeAngle3D = calculateAngle3D(rightAnkle3D, rightKnee3D, rightHip3D)
+
+        angles.clear()
+        angles.add("%.2f".format(leftElbowAngle3D).toDouble())
+        angles.add("%.2f".format(rightElbowAngle3D).toDouble())
+        angles.add("%.2f".format(leftHipAngle3D).toDouble())
+        angles.add("%.2f".format(rightHipAngle3D).toDouble())
+        angles.add("%.2f".format(leftKneeAngle3D).toDouble())
+        angles.add("%.2f".format(rightKneeAngle3D).toDouble())
+
+        var isValidForm = true
+
+        // Check LEFT HIP visibility then degree
+        if (normalizedLandmark[LEFT_HIP].visibility().isPresent &&
+            normalizedLandmark[LEFT_HIP].visibility().get() > 0.8
+        ) {
+            if (leftHipAngle3D < 160 || leftHipAngle3D > 190) {
+                var leftHipVisibility = normalizedLandmark[LEFT_HIP].visibility().get()
+                Log.d(
+                    TAG,
+                    "Left Hip not straight:$leftHipAngle3D, visibility: $leftHipVisibility"
+                )
+                isValidForm = false
+            }
+        }
+        if (normalizedLandmark[RIGHT_HIP].visibility().isPresent &&
+            normalizedLandmark[RIGHT_HIP].visibility().get() > 0.8
+        ) {
+            if (rightHipAngle3D < 160 || rightHipAngle3D > 190) {
+                Log.d(TAG, "Right Hip not straight:$rightHipAngle3D")
+                isValidForm = false
+            }
+        }
+        if (normalizedLandmark[LEFT_KNEE].visibility().isPresent &&
+            normalizedLandmark[LEFT_KNEE].visibility().get() > 0.8
+        ) {
+            if (leftKneeAngle3D < 160 || leftKneeAngle3D > 190) {
+                Log.d(TAG, "Left Knee not straight:$leftKneeAngle3D")
+                isValidForm = false
+            }
+        }
+        if (normalizedLandmark[RIGHT_KNEE].visibility().isPresent &&
+            normalizedLandmark[RIGHT_KNEE].visibility().get() > 0.8
+        ) {
+            if (rightKneeAngle3D < 160 || rightKneeAngle3D > 190) {
+                Log.d(TAG, "Right Knee not straight:$rightKneeAngle3D")
+                isValidForm = false
+            }
+        }
+
+        if (isValidForm) {
+            if (leftElbowAngle3D <= 90 && rightElbowAngle3D <= 90) {
+                currState = DOWN_POSITION
+            } else if (leftElbowAngle3D >= 150 && rightElbowAngle3D >= 150) {
+                currState = UP_POSITION
+            } else {
+                currState = TRANSITION
+            }
+        } else {
+            currState = INVALID_POSITION
+        }
+    }
+
+    fun processResult(result: PoseLandmarkerResult, is3D: Boolean) {
 //        if (!isCounting) {
 //            return
 //        }
@@ -174,7 +306,11 @@ class PushUpLogic() {
             try {
                 Log.d(TAG, "Determining state of user")
                 val normalizedLandmark = landmark.first()
-                determineState(normalizedLandmark)
+                if (is3D) {
+                    determineState3D(normalizedLandmark)
+                } else {
+                    determineState(normalizedLandmark)
+                }
                 Log.d(TAG, "Curr state: $currState")
                 handleState()
                 /* Vestigial
@@ -252,74 +388,7 @@ class PushUpLogic() {
         angles.add("%.2f".format(rightKneeAngle).toDouble())
 
         /* For 3D calculation. Doesn't seem to work yet... The z axis seems to inaccurate
-        val leftWrist = Coordinates3D(
-            normalizedLandmark[LEFT_WRIST].x(),
-            normalizedLandmark[LEFT_WRIST].y(),
-            normalizedLandmark[LEFT_WRIST].z()
-        )
-        val leftElbow = Coordinates3D(
-            normalizedLandmark[LEFT_ELBOW].x(),
-            normalizedLandmark[LEFT_ELBOW].y(),
-            normalizedLandmark[LEFT_ELBOW].z()
-        )
-        val leftShoulder3D = Coordinates3D(
-            normalizedLandmark[LEFT_SHOULDER].x(),
-            normalizedLandmark[LEFT_SHOULDER].y(),
-            normalizedLandmark[LEFT_SHOULDER].z()
-        )
-        val leftHip3D = Coordinates3D(
-            normalizedLandmark[LEFT_HIP].x(),
-            normalizedLandmark[LEFT_HIP].y(),
-            normalizedLandmark[LEFT_HIP].z()
-        )
-        val leftKnee3D = Coordinates3D(
-            normalizedLandmark[LEFT_KNEE].x(),
-            normalizedLandmark[LEFT_KNEE].y(),
-            normalizedLandmark[LEFT_KNEE].z()
-        )
-        val leftAnkle3D = Coordinates3D(
-            normalizedLandmark[LEFT_ANKLE].x(),
-            normalizedLandmark[LEFT_ANKLE].y(),
-            normalizedLandmark[LEFT_ANKLE].z()
-        )
 
-        val rightWrist = Coordinates3D(
-            normalizedLandmark[RIGHT_WRIST].x(),
-            normalizedLandmark[RIGHT_WRIST].y(),
-            normalizedLandmark[RIGHT_WRIST].z()
-        )
-        val rightElbow = Coordinates3D(
-            normalizedLandmark[RIGHT_ELBOW].x(),
-            normalizedLandmark[RIGHT_ELBOW].y(),
-            normalizedLandmark[RIGHT_ELBOW].z()
-        )
-        val rightShoulder = Coordinates3D(
-            normalizedLandmark[RIGHT_SHOULDER].x(),
-            normalizedLandmark[RIGHT_SHOULDER].y(),
-            normalizedLandmark[RIGHT_SHOULDER].z()
-        )
-        val rightHip = Coordinates3D(
-            normalizedLandmark[RIGHT_HIP].x(),
-            normalizedLandmark[RIGHT_HIP].y(),
-            normalizedLandmark[RIGHT_HIP].z()
-        )
-        val rightKnee = Coordinates3D(
-            normalizedLandmark[RIGHT_KNEE].x(),
-            normalizedLandmark[RIGHT_KNEE].y(),
-            normalizedLandmark[RIGHT_KNEE].z()
-        )
-        val rightAnkle = Coordinates3D(
-            normalizedLandmark[RIGHT_ANKLE].x(),
-            normalizedLandmark[RIGHT_ANKLE].y(),
-            normalizedLandmark[RIGHT_ANKLE].z()
-        )
-
-        val leftElbowAngle = calculateAngle3D(leftWrist, leftElbow, leftShoulder3D)
-        val rightElbowAngle = calculateAngle3D(rightWrist, rightElbow, rightShoulder)
-        val leftHipAngle = calculateAngle3D(leftKnee, leftHip, leftShoulder)
-        val rightHipAngle = calculateAngle3D(rightKnee, rightHip, rightShoulder)
-        val leftKneeAngle = calculateAngle3D(leftAnkle3D, leftKnee3D, leftHip3D)
-        val rightKneeAngle = calculateAngle3D(rightAnkle, rightKnee, rightHip)
         */
         var isValidForm = true
 
