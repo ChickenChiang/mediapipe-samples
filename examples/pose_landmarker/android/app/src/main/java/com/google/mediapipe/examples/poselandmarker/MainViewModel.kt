@@ -52,6 +52,9 @@ class MainViewModel : ViewModel() {
         get() =
             _minPosePresenceConfidence
 
+    var is3D : Boolean = false
+
+
     /* Timer variables */
     // Timer stuff
     enum class TimerState {
@@ -92,6 +95,10 @@ class MainViewModel : ViewModel() {
         _model = model
     }
 
+    fun setAngleCalculationMode(isChecked : Boolean) {
+        is3D = isChecked
+    }
+
     // Timer and push up related stuff
     private fun startTimer() {
         timerState = TimerState.RUNNING
@@ -127,7 +134,6 @@ class MainViewModel : ViewModel() {
                 }
             }.start()
         }
-
     }
 
     fun resetTimer() {
@@ -158,7 +164,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun updateModel(result: PoseLandmarkerResult) {
-        pushUpLogic.processResult(result)
+        pushUpLogic.processResult(result, is3D)
         Log.d(TAG, "Processed Result")
         _count.value = pushUpLogic.getCount()
         _angles.value = pushUpLogic.getAngles()
