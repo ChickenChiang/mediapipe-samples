@@ -77,6 +77,8 @@
     <string name="timer_text">%1$s:%2$s</string>
     <string name="count_text">Count : %1$d</string>
     <string name="user_state_text">State: %1$s</string>
+    <string name="switch_text">Use 3D Angles</string>
+
     <!-- Debug angles -->
     <string name="initial_left_elbow">&lt;- Left Elbow</string>
     <string name="initial_right_elbow">Right Elbow -&gt;</string>
